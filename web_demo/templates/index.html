@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC-GPU-PET | Interactive Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">☢️</span>
+                <h1>MC-GPU-PET <span class="subtitle">Interactive Demo</span></h1>
+            </div>
+            <div class="status-bar" id="status-bar">Ready</div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Left Panel: Visualization -->
+            <section class="viz-panel">
+
+                <!-- Viewer 1: Sinogram -->
+                <div class="viewer-card">
+                    <div class="viewer-header">
+                        <h2>Sinogram (Raw Data)</h2>
+                        <div class="viewer-controls">
+                            <span class="viewer-info" id="sino-info">Slice: -/-</span>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="sino-canvas"></canvas>
+                        <div class="overlay-msg" id="sino-overlay">Run simulation to view</div>
+                    </div>
+                    <div class="viewer-footer">
+                        <p class="viewer-desc">Scroll to traverse sinogram stack (axial slices).</p>
+                    </div>
+                </div>
+
+                <!-- Viewer 2: Reconstructed Image -->
+                <div class="viewer-card">
+                    <div class="viewer-header">
+                        <h2>Reconstructed Volume (Trues)</h2>
+                        <div class="viewer-controls">
+                            <span class="viewer-info" id="recon-info">Slice: -/-</span>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="recon-canvas"></canvas>
+                        <div class="overlay-msg" id="recon-overlay">Run simulation to view</div>
+                    </div>
+                    <div class="viewer-footer">
+                        <p class="viewer-desc">Scroll to traverse axial slices.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Right Panel: Controls -->
+            <aside class="control-panel">
+                <div class="control-group">
+                    <h3> Acquisition Parameters</h3>
+
+                    <div class="input-item">
+                        <label>Scan Time (sec)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="time_sec" min="1" max="120" value="20" step="1"
+                                oninput="this.nextElementSibling.value = this.value">
+                            <output>20</output>
+                        </div>
+                    </div>
+
+                    <div class="input-item">
+                        <label>Phantom Activity (Bq)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="activity_phantom" min="1000" max="1000000" value="200000"
+                                step="1000" oninput="this.nextElementSibling.value = this.value">
+                            <output>200000</output>
+                        </div>
+                    </div>
+
+                    <div class="input-item">
+                        <label>Background Activity (Bq)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="activity_bg" min="0" max="5000" value="1000" step="100"
+                                oninput="this.nextElementSibling.value = this.value">
+                            <output>1000</output>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Scanner Geometry</h3>
+
+                    <div class="input-row">
+                        <div class="input-item half">
+                            <label>Axial FOV (cm)</label>
+                            <input type="number" id="fov_z" value="25.0" step="0.5">
+                        </div>
+                        <div class="input-item half">
+                            <label>Detector Radius (cm)</label>
+                            <input type="number" id="detector_radius" value="-15.0" step="0.5"
+                                title="Negative to center automatically">
+                        </div>
+                    </div>
+
+                    <div class="input-item">
+                        <label>Image Resolution</label>
+                        <select id="image_res">
+                            <option value="64">64 x 64 (Fast)</option>
+                            <option value="128" selected>128 x 128 (Standard)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Reconstruction</h3>
+
+                    <div class="input-item">
+                        <label>Method</label>
+                        <select id="recon_method">
+                            <option value="FBP">FBP (Fast)</option>
+                            <option value="OSEM">OSEM (Iterative)</option>
+                            <option value="BSREM">BSREM (Regularized)</option>
+                        </select>
+                    </div>
+
+                    <!-- FBP Params -->
+                    <div id="params-FBP" class="params-group">
+                        <div class="input-item">
+                            <label>Filter</label>
+                            <select id="fbp_filter">
+                                <option value="ramp">Ramp</option>
+                                <option value="shepp-logan">Shepp-Logan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- OSEM Params -->
+                    <div id="params-OSEM" class="params-group hidden">
+                        <div class="input-row">
+                            <div class="input-item half">
+                                <label>Iterations</label>
+                                <input type="number" id="osem_iters" value="5" min="1" max="20">
+                            </div>
+                            <div class="input-item half">
+                                <label>Subsets</label>
+                                <input type="number" id="osem_subsets" value="12" min="1" max="24">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BSREM Params -->
+                    <div id="params-BSREM" class="params-group hidden">
+                        <div class="input-row">
+                            <div class="input-item half">
+                                <label>Iterations</label>
+                                <input type="number" id="bsrem_iters" value="10" min="1" max="50">
+                            </div>
+                            <div class="input-item half">
+                                <label>Beta (Reg)</label>
+                                <input type="number" id="bsrem_beta" value="0.05" step="0.01">
+                            </div>
+                        </div>
+                        <div class="input-item">
+                            <label>Subsets</label>
+                            <input type="number" id="bsrem_subsets" value="12" min="1" max="24">
+                        </div>
+                    </div>
+
+                    <button id="recon-btn" class="primary-btn secondary-btn" disabled>
+                        <span class="btn-icon">↺</span> Reconstruct Slice
+                    </button>
+
+                </div>
+
+                <div class="action-area">
+                    <button id="run-btn" class="primary-btn">
+                        <span class="btn-icon">▶</span> Run Simulation
+                    </button>
+                    <div class="progress-bar-container" id="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </aside>
+
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
