@@ -1,0 +1,258 @@
+:root {
+    --bg-color: #0d0e12;
+    --panel-bg: #1a1c23;
+    --accent-color: #6366f1; /* Indigo */
+    --accent-hover: #4f46e5;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --border-color: #2d3748;
+    --success-color: #10b981;
+    --font-main: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.logo .subtitle {
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-left: 0.5rem;
+    font-size: 1rem;
+}
+
+.status-bar {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--success-color);
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Viz Panel */
+.viz-panel {
+    flex: 6;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    overflow-y: auto;
+    background: radial-gradient(circle at top right, #1e2029 0%, transparent 40%);
+}
+
+.viewer-card {
+    flex: 1;
+    background-color: rgba(26, 28, 35, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.viewer-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.viewer-header h2 {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.viewer-info {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.canvas-container {
+    flex: 1;
+    position: relative;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+canvas {
+    max-width: 100%;
+    max-height: 100%;
+    image-rendering: pixelated; /* Sharp pixels for medical data */
+}
+
+.overlay-msg {
+    position: absolute;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.viewer-footer {
+    padding: 0.75rem;
+    background-color: rgba(0,0,0,0.2);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Control Panel */
+.control-panel {
+    flex: 4;
+    max-width: 400px;
+    background-color: var(--panel-bg);
+    border-left: 1px solid var(--border-color);
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.control-group h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.input-item {
+    margin-bottom: 1.25rem;
+}
+
+.input-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.input-item.half {
+    flex: 1;
+}
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+input[type="number"], select {
+    width: 100%;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+}
+
+.range-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent-color);
+}
+
+output {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    width: 3rem;
+    text-align: right;
+}
+
+/* Button */
+.primary-btn {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Progress */
+.progress-bar-container {
+    height: 4px;
+    width: 100%;
+    background-color: var(--bg-color);
+    margin-top: 1rem;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: var(--success-color);
+    transition: width 0.3s;
+}
+
+.hidden {
+    display: none;
+}

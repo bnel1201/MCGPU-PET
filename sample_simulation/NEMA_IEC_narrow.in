@@ -1,0 +1,57 @@
+# >>>> INPUT FILE FOR NEMA IEC PHANTOM SIMULATION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#
+#  -- NEMA IEC Body Phantom Simulation (128x128x128) - NARROW ENERGY WINDOW
+#
+
+#[SECTION SIMULATION CONFIG v.2016-07-05]
+0                               # RANDOM SEED (0 = based on current time)
+0                               # GPU NUMBER
+32                              # GPU THREADS PER CUDA BLOCK
+1.0                             # INPUT MATERIAL DENSITY SCALE FACTOR
+
+#[SECTION SOURCE PET SCAN v.2017-03-14]
+10.0                            # TOTAL PET SCAN ACQUISITION TIME [seconds]
+70000.0                         # ISOTOPE MEAN LIFE [s]
+   1    0.0                     # MATERIAL ACTIVITY TABLE (Unused)
+   0    0.0
+
+#[SECTION PHASE SPACE FILE v.2016-07-05]
+ NEMA_IEC.psf                   # OUTPUT PSF FILENAME
+ 0.0  0.0  0.0  25.0  -15.0     # DETECTOR: CENTER(X,Y,Z), HEIGHT=25cm, RADIUS=15cm
+ 20000000                       # PSF SIZE (Elements)
+ 0                              # REPORT TRUES(1), SCATTER(2), BOTH(0)
+ 0                              # REPORT PSF(1), SINOGRAM(2) or BOTH(0)
+
+#[SECTION DOSE DEPOSITION v.2012-12-12]
+YES                             # TALLY MATERIAL DOSE?
+NO                              # TALLY 3D VOXEL DOSE?
+nema_dose.dat                   # OUTPUT VOXEL DOSE FILE
+  1  128                        # ROI X
+  1  128                        # ROI Y
+  1  128                        # ROI Z
+
+#[SECTION ENERGY PARAMETERS v.2019-04-25]
+0.12          # ENERGY RESOLUTION
+450000.0      # ENERGY WINDOW LOW (keV) - NARROW
+550000.0      # ENERGY WINDOW HIGH (keV) - NARROW
+
+#[SECTION SINOGRAM PARAMETERS v.2019-04-25]
+25.0   # AXIAL FIELD OF VIEW (cm)
+128    # NUMBER OF ROWS
+504    # TOTAL NUMBER OF CRYSTALS
+252    # NUMBER OF ANGULAR BINS
+256    # NUMBER OF RADIAL BINS
+128    # NUMBER OF Z SLICES
+128    # IMAGE RESOLUTION
+700    # NUMBER OF ENERGY BINS
+79     # MAXIMUM RING DIFFERENCE
+11     # SPAN
+
+#[SECTION VOXELIZED GEOMETRY FILE v.2009-11-30]
+nema_iec_128.vox               # VOXEL GEOMETRY FILE
+
+#[SECTION MATERIAL FILE LIST v.2009-11-30]
+./materials/air_5-515keV.mcgpu.gz             # 1
+./materials/water_5-515keV.mcgpu.gz           # 2
+#
+# >>>> END INPUT FILE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
