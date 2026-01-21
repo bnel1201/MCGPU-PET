@@ -1,0 +1,4 @@
+include MCGPU-PET.cu
+include MCGPU-PET.h
+include MCGPU-PET_kernel.cu
+recursive-include mcgpu/materials *
