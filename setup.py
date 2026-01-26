@@ -56,25 +56,7 @@ class BuildMCGPU(build_py):
             raise
 
 setup(
-    name='mcgpu-pet',
-    version='1.0.0',
-    description='Python wrapper and package for MC-GPU-PET Simulator',
-    author='Andreu Badal, Joaquin L. Herraiz, Alejandro Lopez-Montes',
-    packages=find_packages(),
     cmdclass={
         'build_py': BuildMCGPU,
     },
-    include_package_data=True,
-    package_data={
-        'mcgpu': ['materials/*.gz', 'MCGPU-PET.x'] # Helper to ensure it's tracked if manual build
-    },
-    install_requires=[
-        'numpy',
-    ],
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Science/Research',
-        'Programming Language :: Python :: 3',
-        'Topic :: Scientific/Engineering :: Medical Science Apps.',
-    ],
 )
