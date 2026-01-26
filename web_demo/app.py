@@ -7,9 +7,9 @@ from flask import Flask, render_template, request, jsonify, send_file
 import io
 import time # For checking cache validity
 
-# Add parent directory to path to import mcgpu_wrapper
+# Add parent directory if needed for other modules (like legacy recon), but mcgpu is installed
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from mcgpu_wrapper import MCGPUWrapper
+from mcgpu import MCGPUWrapper
 
 # Import for Reconstruction
 from skimage.transform import iradon

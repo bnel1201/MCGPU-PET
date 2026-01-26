@@ -40,10 +40,62 @@ class MCGPUWrapper:
 
         Args:
             input_params (dict): Dictionary of simulation parameters overriding defaults.
+                **Simulation Config:**
+                - `random_seed` (int, default=0): Seed for random number generator.
+                - `gpu_id` (int, default=0): CUDA GPU device ID to use.
+                - `threads_per_block` (int, default=32): GPU threads per block.
+                - `scale_density` (float, default=1.0): Scaling factor for material density.
+
+                **Source:**
+                - `time_sec` (float, default=1.0): Total acquisition time in seconds.
+                - `isotope_mean_life` (float, default=70000.0): Mean life of the isotope in seconds.
+                - `activities` (list of tuples, default=[]): List of (material_index, activity_Bq) for each active source.
+
+                **Phase Space:**
+                - `output_psf_file` (str, default='MCGPU_PET.psf'): Output filename for Phase Space File.
+                - `detector_center` (tuple, default=(0.0, 0.0, 0.0)): Center (x,y,z) of the detector in cm.
+                - `detector_height` (float, default=25.0): Height of the cylindrical detector in cm.
+                - `detector_radius` (float, default=-15.0): Radius of the detector cylinder in cm (negative means inward facing?).
+                - `psf_size` (int, default=20000000): Max number of photons to store in PSF.
+                - `report_trues_scatter` (int, default=0): 1=Trues, 2=Scatter, 0=Both.
+                - `report_psf_sino` (int, default=0): 1=PSF, 2=Sinogram, 0=Both.
+
+                **Dose:**
+                - `tally_material_dose` (str, default='YES'): Tally dose per material?
+                - `tally_voxel_dose` (str, default='NO'): Tally 3D dose map?
+                - `output_dose_file` (str, default='mc-gpu_dose.dat'): Output dose filename.
+                - `dose_roi_x`, `dose_roi_y`, `dose_roi_z` (tuple, default=(1, 128)): Min/Max indices for dose ROI.
+
+                **Energy:**
+                - `energy_resolution` (float, default=0.12): Energy resolution (fraction, e.g. 12%).
+                - `energy_window_low` (float, default=350000.0): Lower energy threshold in eV.
+                - `energy_window_high` (float, default=600000.0): Upper energy threshold in eV.
+
+                **Sinogram / Geometry:**
+                - `fov_z` (float, default=25.0): Axial Field of View in cm.
+                - `num_rows` (int, default=128): Number of detector element rows (transaxial?).
+                - `num_crystals` (int, default=504): Total number of crystals per ring.
+                - `num_angles` (int, default=252): Number of angular bins in sinogram.
+                - `num_rad_bins` (int, default=256): Number of radial bins in sinogram.
+                - `num_z_slices` (int, default=128): Number of axial slices.
+                - `image_res` (int, default=128): Image resolution (pixels) for output maps.
+                - `num_energy_bins` (int, default=700): Number of energy bins for spectra.
+                - `max_ring_diff` (int, default=79): Maximum ring difference for 3D PET.
+                - `span` (int, default=11): Span for mashing.
+
+                **Files:**
+                - `voxel_file` (str): Path to the voxelized geometry file (default 'nema_iec_128.vox').
+                - `material_files` (list, default=[internal Air, internal Water]): List of material file paths.
+
             clean_up_input (bool): Whether to remove the generated .in file after run.
 
         Returns:
-            dict: Dictionary containing parsed output data (numpy arrays).
+            dict: Dictionary containing parsed output data.
+            keys:
+                - `'sinogram_Trues'`: ndarray (n_sinos, n_angles, n_rad) - True coincidence sinograms.
+                - `'sinogram_Scatter'`: ndarray (n_sinos, n_angles, n_rad) - Scatter coincidence sinograms.
+                - `'image_Trues'`: ndarray (nzs, res, res) - Projection/Image of Trues (if generated).
+                - `'image_Scatter'`: ndarray (nzs, res, res) - Projection/Image of Scatter (if generated).
         """
         # Merge defaults
         params = self._get_default_params()

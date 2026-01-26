@@ -9,6 +9,77 @@ For a limited time the article can be accessed for free at: https://authors.else
 ------------
 
 
+
+# MCGPU-PET Fork: Enhanced Python Support & Web Interface
+
+This fork of [MCGPU-PET](https://github.com/bnel1201/MCGPU-PET) adds a robust Python wrapper, a web-based demonstration interface, and modern testing infrastructure.
+
+### Key Improvements
+- **Python Package**: Fully installable via `pip` with `mcgpu` module.
+- **Improved Wrapper**: `MCGPUWrapper` class for easy integration into Python scripts and notebooks.
+- **Web Demo**: A Flask-based web interface to run simulations and visualize results interactively.
+- **Modern Testing**: Unit and integration tests migrated to `pytest`.
+- **Automatic Compilation**: The C++/CUDA extension is automatically compiled upon installation.
+
+## Installation
+
+Prerequisites:
+- NVIDIA GPU with CUDA Toolkit installed
+- Python 3.8+
+
+```bash
+# Clone the repository
+git clone https://github.com/<your-username>/MCGPU-PET.git
+cd MCGPU-PET
+
+# Install in editable mode
+pip install -e .
+```
+
+The installation process will automatically look for `nvcc` and compile the `MCGPU-PET.x` executable.
+
+## Usage
+
+### Python Wrapper
+You can now import `mcgpu` directly in your scripts:
+
+```python
+from mcgpu import MCGPUWrapper
+
+# Initialize wrapper (uses package defaults for executable/materials)
+wrapper = MCGPUWrapper(verbose=True)
+
+# Run simulation
+results = wrapper.run({
+    'time_sec': 5.0,
+    'random_seed': 12345
+})
+
+# Access results
+sinogram = results['sinogram_Trues']
+image = results['image_Trues']
+```
+See `example_wrapper_usage.py` for a complete example.
+
+### Web Demo
+To run the web interface:
+
+```bash
+python web_demo/app.py
+```
+Open your browser to `http://localhost:5000`.
+
+### Running Tests
+Run the test suite using `pytest`:
+
+```bash
+pytest
+```
+
+---
+
+### Original MCGPU-PET Description
+
 # MCGPU-PET: Open-Source Real-Time Monte Carlo PET Simulator
 
 Monte Carlo (MC) simulations are used to model the emission, transmission, and detection of the radiation in Positron Emission Tomography (PET). In this work we introduce a new open-source MC software for PET simulation, MCGPU-PET, which has been designed to fully exploit the computing capabilities of modern GPUs to be able to simulate the acquisition of up to 1 million coincidences per second from voxelized source and material distributions. We evaluated the performance of the code, and applied it to provide fast accurate estimation of the PET coincidences (trues, scatter, randoms, and spurious coincidences). We simulated the numerical Zubal head phantom, using 8 different tissues, assuming a standard 18F-FDG uptake. A fully-3D scatter sinogram with 10 million coincidences was generated in 13 seconds in one GPU, indicating that the code might be fast enough to be used within an iterative image reconstruction process. MCGPU-PET provides estimation of True and Scatter coincidences and spurious background for non-standard isotopes at a rate 3 orders of magnitude faster than standard MC methods. This significant speed-up makes it a good candidate for providing accurate Scatter estimations within the image reconstruction process.
@@ -26,7 +97,7 @@ Code presented at the IEEE NSS MIC conference (https://nssmic.ieee.org/2021/) on
 - **M-07-01 – GPU-accelerated Monte Carlo-Based Scatter and Prompt-Gamma Corrections in PET**, A. López-Montes, J. Cabello, M. Conti, A. Badal, J. L. Herraiz
 
 
-# How to run the sample simulation
+# How to run the sample simulation (Legacy Method)
 Compile MCGPU-PET with the provided Makefile (make sure you have the CUDA SDK installed, and update the script to the compute capability of your GPU). Move the executable to the sub-folder and run it with the provided input file. Review the entire output file because it has lots of useful information, and warning messages if something didn't work well. If successful, the code will output files with the measured sinograms (Trues and Scatter), images of the voxels that emitted the detected coincidences, and an energy spectra of the detected photons (blurred by the input energy resolution, and including Compton-scattered photonas at reduced energy). 
 The output binary file 'image_Trues.raw' can be opened with ImageJ (import raw -> 9x9x9, 32-bit integer values). It shows some random emission from the water cube and 3 high emission points in the central plane, as expected. The file 'MCGPU_PET.psf' shows part of the measured phase-space file in text format, but notice that the code simulates emissions one voxel at a time and therefore the PSF is not sorted by emission time.
 If desired, the code can compute a 3D voxel dose distribution; but keep in mind that electron and positron tracks are not simulated, only the disintegration photons. 

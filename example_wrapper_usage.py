@@ -1,23 +1,13 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from mcgpu_wrapper import MCGPUWrapper
+from mcgpu import MCGPUWrapper
 
 def main():
-    # Path to the executable - update if needed
-    # Assuming the script is run from /home/sarah/Dev/MCGPU-PET/
-    executable = './sample_simulation/MCGPU-PET.x'
-    
-    # Check if executable exists
-    if not os.path.exists(executable):
-        print(f"Error: Executable not found at {executable}")
-        print("Please compile MC-GPU-PET or adjust path.")
-        return
-
     # Initialize wrapper
-    # We use sample_simulation as working dir so it finds the materials folder relatively
+    # We use sample_simulation as working dir so it finds the voxel file 'nema_iec_128.vox'
+    # The executable and material files are now provided by the installed package!
     wrapper = MCGPUWrapper(
-        executable_path=executable,
         working_dir='sample_simulation',
         verbose=True
     )
@@ -31,11 +21,7 @@ def main():
             (1, 1000.0), # Material 1 (Air?) - Low activity
             (2, 50000.0) # Material 2 (Water?) - Higher activity
         ],
-        # Material paths are relative to working_dir
-        'material_files': [
-            './materials/air_5-515keV.mcgpu.gz',
-            './materials/water_5-515keV.mcgpu.gz'
-        ],
+
         'voxel_file': 'nema_iec_128.vox',
         
         # NEMA Parameters (matching NEMA_IEC.in)
